@@ -16,6 +16,9 @@
 package org.spiffyui.spiffynavigation.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -35,5 +38,29 @@ public class Panel3 extends HTMLPanel
         RootPanel.get("mainContent").add(this);
         
         setVisible(false);
+        
+        Anchor panel1 = new Anchor("Panel 1", "#");
+        panel1.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                event.preventDefault();
+                Index.selectItem(Index.PANEL1_NAV_ITEM_ID);
+            }
+        });
+        add(panel1, "panel1Link");
+        
+        Anchor panel2 = new Anchor("Panel 2", "#");
+        panel2.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                event.preventDefault();
+                Index.selectItem(Index.PANEL2_NAV_ITEM_ID);
+            }
+        });
+        add(panel2, "panel2Link");
     }
 }
