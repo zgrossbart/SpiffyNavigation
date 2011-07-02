@@ -15,40 +15,39 @@
  ******************************************************************************/
 package org.spiffyui.spiffynavigation.client;
 
-import org.spiffyui.client.JSONUtil;
+import java.util.HashMap;
+
+import org.spiffyui.client.JSUtil;
 import org.spiffyui.client.MainFooter;
 import org.spiffyui.client.MainHeader;
-import org.spiffyui.client.MessageUtil;
-import org.spiffyui.client.rest.RESTCallback;
-import org.spiffyui.client.rest.RESTException;
-import org.spiffyui.client.rest.RESTility;
-import org.spiffyui.client.widgets.LongMessage;
+import org.spiffyui.client.nav.MainNavBar;
+import org.spiffyui.client.nav.NavBarListener;
+import org.spiffyui.client.nav.NavItem;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
-
+import com.google.gwt.user.client.ui.ComplexPanel;
 
 /**
  * This class is the main entry point for our GWT module.
  */
-public class Index implements EntryPoint, ClickHandler, KeyPressHandler 
+public class Index implements EntryPoint, NavBarListener 
 {
     private static final SpiffyUiHtml STRINGS = (SpiffyUiHtml) GWT.create(SpiffyUiHtml.class);
 
     private static Index g_index;
-    private TextBox m_text = new TextBox();
-    private LongMessage m_longMessage = new LongMessage("longMsgPanel");
+    
+    private MainNavBar m_navBar;
+    private final HashMap<NavItem, ComplexPanel> m_panels = new HashMap<NavItem, ComplexPanel>();
+    
+    /** NavItem ID for the first panel */
+    public static final String PANEL1_NAV_ITEM_ID = "p1";
+    
+    /** NavItem ID for the second panel */
+    public static final String PANEL2_NAV_ITEM_ID = "p2";
+    
+    /** NavItem ID for the third panel */
+    public static final String PANEL3_NAV_ITEM_ID = "p3";
 
     /**
      * The Index page constructor
@@ -69,108 +68,64 @@ public class Index implements EntryPoint, ClickHandler, KeyPressHandler
         MainHeader header = new MainHeader();
         header.setHeaderTitle("Hello Spiffy SpiffyNavigation!");
         
+        m_navBar = new MainNavBar();
+        
+        /*
+         Now we add our panels
+         */
+        NavItem item = new NavItem(PANEL1_NAV_ITEM_ID, "Panel 1", "This is the Panel 1 tooltip");
+        m_navBar.add(item);
+        m_panels.put(item, new Panel1());
+        
+        item = new NavItem(PANEL2_NAV_ITEM_ID, "Panel 2", "This is the Panel 2 tooltip");
+        m_navBar.add(item);
+        m_panels.put(item, new Panel2());
+        
+        item = new NavItem(PANEL3_NAV_ITEM_ID, "Panel 3", "This is the Panel 3 tooltip");
+        m_navBar.add(item);
+        m_panels.put(item, new Panel3());
+        
         /*
          The main footer shows our message at the bottom of the page.
          */
         MainFooter footer = new MainFooter();
         footer.setFooterString("SpiffyNavigation was built with the <a href=\"http://www.spiffyui.org\">Spiffy UI Framework</a>");
         
-        /*
-         This HTMLPanel holds most of our content.
-         MainPanel_html was built in the HTMLProps task from MainPanel.html, which allows you to use large passages of html
-         without having to string escape them.
-         */
-        HTMLPanel panel = new HTMLPanel(STRINGS.MainPanel_html())
-        {
-            @Override
-            public void onLoad()
-            {
-                super.onLoad();
-                /*
-                 Let's set focus into the text field when the page first loads
-                 */
-                m_text.setFocus(true);
-            }
-        };
-        
-        RootPanel.get("mainContent").add(panel);
-        
-        /*
-         These dynamic controls add interactivity to our page.
-         */
-        panel.add(m_longMessage, "longMsg");
-        panel.add(m_text, "nameField");
-        final Button button = new Button("Submit");
-        panel.add(button, "submitButton");
-        
-        button.addClickHandler(this);
-        m_text.addKeyPressHandler(this);
+        selectItem(PANEL1_NAV_ITEM_ID);
+        m_navBar.addListener(this);
         
     }
     
-    @Override
-    public void onClick(ClickEvent event)
+    /**
+     * Select the NavItem
+     * @param itemId ID of the NavItem to select
+     */
+    public static void selectItem(String itemId)
     {
-        sendRequest();
+        NavItem item = g_index.m_navBar.getItem(itemId);
+        g_index.m_navBar.selectItem(item);
+    }
+    
+    @Override
+    public boolean preItemSelected(NavItem item)
+    {
+        return true;
     }
 
     @Override
-    public void onKeyPress(KeyPressEvent event)
+    public void itemSelected(NavItem item)
     {
-        /*
-         We want to submit the request if the user pressed enter
-         */
-        if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
-            sendRequest();
+        for (NavItem key : m_panels.keySet()) {
+            /*
+             We could hide and show these panels by just calling setVisible,
+             but that causes a redraw bug in IE 8 where the body extends for
+             for the total height of the page below the footer.
+             */
+            if (key.equals(item)) {
+                JSUtil.show("#" + m_panels.get(key).getElement().getId());
+            } else {
+                JSUtil.hide("#" + m_panels.get(key).getElement().getId(), "fast");
+            }
         }
-    }
-    
-    /**
-     * Send the REST request to the server and read the response back.
-     */
-    private void sendRequest()
-    {
-        String q = m_text.getValue().trim();
-        if (q.equals("")) {
-            MessageUtil.showWarning("Please enter your name in the text field.", false);
-            return;
-        }
-        RESTility.callREST("simple/" + q, new RESTCallback() {
-            
-            @Override
-            public void onSuccess(JSONValue val)
-            {
-                showSuccessMessage(val);
-            }
-            
-            @Override
-            public void onError(int statusCode, String errorResponse)
-            {
-                MessageUtil.showError("Error.  Status Code: " + statusCode + " " + errorResponse);
-            }
-            
-            @Override
-            public void onError(RESTException e)
-            {
-                MessageUtil.showError(e.getReason());
-            }
-        });
-        
-    }
-    
-    /**
-     * Show the successful message result of our REST call.
-     * 
-     * @param val    the value containing the JSON response from the server
-     */
-    private void showSuccessMessage(JSONValue val)
-    {
-        JSONObject obj = val.isObject();
-        String name = JSONUtil.getStringValue(obj, "user");
-        String browser = JSONUtil.getStringValue(obj, "userAgent");
-        String server = JSONUtil.getStringValue(obj, "serverInfo");
-        
-        String message = "Hello, " + name + "!  <br/>You are using " + browser + ".<br/>The server is " + server + ".";
-        m_longMessage.setHTML(message);
     }
 }

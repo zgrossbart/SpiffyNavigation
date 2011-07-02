@@ -18,7 +18,6 @@ package org.spiffyui.spiffynavigation.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.netiq.arc.client.SpiffyUiHtml;
 
 public class Panel2 extends HTMLPanel
 {
