@@ -23,11 +23,14 @@ import org.spiffyui.client.MainHeader;
 import org.spiffyui.client.nav.MainNavBar;
 import org.spiffyui.client.nav.NavBarListener;
 import org.spiffyui.client.nav.NavItem;
+import org.spiffyui.client.nav.NavSection;
+import org.spiffyui.client.nav.NavSeparator;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ComplexPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 
 /**
  * This class is the main entry point for our GWT module.
@@ -82,15 +85,26 @@ public class Index implements EntryPoint, NavBarListener
         m_navBar.add(item);
         m_panels.put(item, new Panel2());
         
+        /*
+         Now we'll add a menu separator
+         */
+        m_navBar.add(new NavSeparator(HTMLPanel.createUniqueId()));
+        
+        /*
+         * Now a collapsabla section
+         */
+        NavSection group1 = new NavSection("group1", "Group 1");
+        m_navBar.add(group1);
+        
         item = new NavItem(PANEL3_NAV_ITEM_ID, "Panel 3", "This is the Panel 3 tooltip", "?" + PANEL3_NAV_ITEM_ID);
-        m_navBar.add(item);
+        group1.add(item);
         m_panels.put(item, new Panel3());
         
         /*
          The main footer shows our message at the bottom of the page.
          */
         MainFooter footer = new MainFooter();
-        footer.setFooterString("SpiffyNavigation was built with the <a href=\"http://www.spiffyui.org\">Spiffy UI Framework</a>");
+        footer.setFooterString("This sample was built with the <a href=\"http://www.spiffyui.org\">Spiffy UI Framework</a>");
         
         m_navBar.setBookmarkable(true);
         m_navBar.addListener(this);

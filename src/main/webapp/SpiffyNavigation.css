@@ -28,3 +28,7 @@ li {
 .spiffy-longmessage-panel {
     margin-bottom: 1em;
 }
+
+.navItemSelected {
+    background-color: #EFD137;
+}
