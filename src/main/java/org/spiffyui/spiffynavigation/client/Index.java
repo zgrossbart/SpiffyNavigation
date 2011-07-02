@@ -66,22 +66,22 @@ public class Index implements EntryPoint, NavBarListener
          displays our title bar at the top of our page.
          */
         MainHeader header = new MainHeader();
-        header.setHeaderTitle("Hello Spiffy SpiffyNavigation!");
+        header.setHeaderTitle("Spiffy UI Navigation");
         
         m_navBar = new MainNavBar();
         
         /*
          Now we add our panels
          */
-        NavItem item = new NavItem(PANEL1_NAV_ITEM_ID, "Panel 1", "This is the Panel 1 tooltip");
+        NavItem item = new NavItem(PANEL1_NAV_ITEM_ID, "Panel 1", "This is the Panel 1 tooltip", "?" + PANEL1_NAV_ITEM_ID);
         m_navBar.add(item);
         m_panels.put(item, new Panel1());
         
-        item = new NavItem(PANEL2_NAV_ITEM_ID, "Panel 2", "This is the Panel 2 tooltip");
+        item = new NavItem(PANEL2_NAV_ITEM_ID, "Panel 2", "This is the Panel 2 tooltip", "?" + PANEL2_NAV_ITEM_ID);
         m_navBar.add(item);
         m_panels.put(item, new Panel2());
         
-        item = new NavItem(PANEL3_NAV_ITEM_ID, "Panel 3", "This is the Panel 3 tooltip");
+        item = new NavItem(PANEL3_NAV_ITEM_ID, "Panel 3", "This is the Panel 3 tooltip", "?" + PANEL3_NAV_ITEM_ID);
         m_navBar.add(item);
         m_panels.put(item, new Panel3());
         
@@ -91,9 +91,10 @@ public class Index implements EntryPoint, NavBarListener
         MainFooter footer = new MainFooter();
         footer.setFooterString("SpiffyNavigation was built with the <a href=\"http://www.spiffyui.org\">Spiffy UI Framework</a>");
         
-        selectItem(PANEL1_NAV_ITEM_ID);
+        m_navBar.setBookmarkable(true);
         m_navBar.addListener(this);
         
+        selectItem(PANEL1_NAV_ITEM_ID);
     }
     
     /**
