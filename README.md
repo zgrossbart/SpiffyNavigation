@@ -1,7 +1,7 @@
 [Spiffy UI](http://www.spiffyui.org) - GWT made simple
 ==================================================
 
-This is an application created from the [Spiffy UI Framework](http://www.spiffyui.org) project creator, which builds a simple REST application with Apache Maven.
+This application is a sample of Spiffy UI navigation using the [Spiffy UI navigation widgets](http://www.spiffyui.org/javadoc/org/spiffyui/client/nav/package-summary.html).  It builds a simple application with three panels and a navigation item sub group.
 
 
 Building and Running SpiffyNavigation
