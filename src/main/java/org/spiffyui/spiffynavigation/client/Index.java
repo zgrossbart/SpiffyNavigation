@@ -26,6 +26,7 @@ import org.spiffyui.client.nav.NavItem;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ComplexPanel;
 
 /**
@@ -94,7 +95,41 @@ public class Index implements EntryPoint, NavBarListener
         m_navBar.setBookmarkable(true);
         m_navBar.addListener(this);
         
-        selectItem(PANEL1_NAV_ITEM_ID);
+        selectDefaultItem();
+    }
+    
+    private void selectDefaultItem()
+    {
+        /*
+         * If the user has loaded this application in their
+         * current session then we want to bring them back to the
+         * same page when the application reloads.
+         */
+        if (getIdFromHash() != null &&
+            m_navBar.getItem(getIdFromHash()) != null) {
+            selectItem(getIdFromHash());
+        } else if (Window.Location.getParameterMap().size() > 0) {
+            selectItem("" + Window.Location.getParameterMap().keySet().toArray()[0]);
+        } else {
+            selectItem(PANEL1_NAV_ITEM_ID);
+        }
+    }
+    
+    private static String getIdFromHash()
+    {
+        if (Window.Location.getHash().length() < 2) {
+            return null;
+        }
+        
+        String hash = Window.Location.getHash();
+        
+        /*
+         In HTML4 browsers the hash will look like this:  #?p2&_suid=777
+         */
+        
+        int start = 2;
+        int end = hash.indexOf('&');
+        return hash.substring(start, end);
     }
     
     /**
