@@ -21,6 +21,11 @@ h1 {
     margin-bottom: 1.5em;
 }
 
+h2 {
+    font-weight: bold;
+    margin-top: 1.5em;
+}
+
 li {
     list-style: disc inside none;
 }
