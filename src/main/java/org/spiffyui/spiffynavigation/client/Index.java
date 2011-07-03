@@ -129,6 +129,12 @@ public class Index implements EntryPoint, NavBarListener
         }
     }
     
+    /**
+     * This method finds the current panel ID from the hash code in the URL.  This only shows
+     * up when we're using a browser that doesn't support HTML 5 history.
+     * 
+     * @return the panel ID from the hash code or null if it isn't there
+     */
     private static String getIdFromHash()
     {
         if (Window.Location.getHash().length() < 2) {
